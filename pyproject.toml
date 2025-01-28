@@ -1,0 +1,99 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hackaton_owkin_gbm"
+version = "0.1.0"
+description = "hackaton_owkin_gbm"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "jeremie kalfon", email = "jkobject@gmail.com" }
+]
+dependencies = [
+    "ruff>=0.7.1",
+]
+
+[project.urls]
+homepage = "https://github.com/jkobject/hackaton_owkin_gbm/"
+
+# Dependências de produção (adicione suas dependências aqui quando necessário)
+[dependency-groups]
+dev = []
+
+# Scripts de entrada
+[project.scripts]
+hackaton_owkin_gbm = "hackaton_owkin_gbm.__main__:main"
+
+# Dependências opcionais para desenvolvimento e testes
+[project.optional-dependencies]
+test = [
+    "pip-tools",
+    "pytest",
+    "coverage",
+    "flake8",
+    "black",
+    "isort",
+    "pytest-cov",
+    "mypy",
+    "gitchangelog",
+    "codecov",
+    "mkdocs>=1.5.3",
+    "mkdocs-git-revision-date-localized-plugin>=1.0.0",
+    "mkdocstrings>=0.22.0",
+    "mkdocs-git-authors-plugin>=0.4.0",
+    "mkdocs-jupyter>=0.2.0",
+    "mkdocstrings-python>=0.10.0",
+]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q -vv"
+pythonpath = ["/tests"]
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+ignore = ["E501", "E203", "E266", "E265", "F401", "F403", "E722", "E741", "E731", "E721"]
+
+[tool.taskipy.tasks]
+lint = "uvx ruff check tests"
+test = """
+    uvx --extra test pytest -s
+    uvx --extra test coverage xml
+    uvx --extra test coverage html
+    """
+show = """
+    python -V
+    python -m site
+    """
+install = "uv sync --all-extras --dev"
+fmt = "uvx ruff format hackaton_owkin_gbm/ tests/"
+lint = "uvx ruff check --fix hackaton_owkin_gbm/ tests/"
+test = """
+    uvx pytest -v --cov-config .coveragerc --cov=hackaton_owkin_gbm -l --tb=short --maxfail=1 tests/
+    uvx coverage xml
+    uvx coverage html
+    """
+clean = """
+    find . -type d -name "__pycache__" -exec rm -rf {} +
+    find . -type f -name "*.pyc" -delete
+    find . -type f -name ".coverage" -delete
+    find . -type f -name "coverage.xml" -delete
+    find . -type d -name "htmlcov" -exec rm -rf {} +
+    find . -type d -name ".pytest_cache" -exec rm -rf {} +
+    find . -type d -name ".mypy_cache" -exec rm -rf {} +
+    find . -type d -name "dist" -exec rm -rf {} +
+    find . -type d -name "build" -exec rm -rf {} +
+    find . -type d -name "*.egg-info" -exec rm -rf {} +
+    """
+docs = """
+    mkdocs build
+    python -c "import webbrowser; webbrowser.open('site/index.html')"
+    """
+
