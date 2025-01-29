@@ -23,16 +23,16 @@ install:          ## Install the project in dev mode.
 
 .PHONY: fmt
 fmt:              ## Format code using black & isort.
-	$(ENV_PREFIX)uv run ruff format scprint/ tests/
+	$(ENV_PREFIX)uv run ruff format hackaton_owkin_gbm/ tests/
 
 .PHONY: lint
 lint:             ## Run pep8, black, mypy linters.
 #most are due to flashattention...
-	$(ENV_PREFIX)uv run ruff check --fix scprint/ tests/
+	$(ENV_PREFIX)uv run ruff check --fix hackaton_owkin_gbm/ tests/
 
 .PHONY: test
 test: lint        ## Run tests and generate coverage report.
-	$(ENV_PREFIX)uv run pytest -v --cov-config .coveragerc --cov=scprint -l --tb=short --maxfail=1 tests/
+	$(ENV_PREFIX)uv run pytest -v --cov-config .coveragerc --cov=hackaton_owkin_gbm -l --tb=short --maxfail=1 tests/
 	$(ENV_PREFIX)uv run coverage xml
 	$(ENV_PREFIX)uv run coverage html
 
@@ -65,18 +65,17 @@ virtualenv:       ## Create a virtual environment.
 release:          ## Create a new tag for release.
 	@echo "WARNING: This operation will create s version tag and push to github"
 	@read -p "Version? (provide the next x.y.z semver) : " TAG
-	@echo "$${TAG}" > scprint/VERSION
+	@echo "$${TAG}" > hackaton_owkin_gbm/VERSION
 	@sed -i 's/^version = .*/version = "'$${TAG}'"/' pyproject.toml
-	@sed -i 's/__version__ = .*/__version__ = "'$${TAG}'"/' scprint/__init__.py
 	@$(ENV_PREFIX)gitchangelog > HISTORY.md
-	@git add scprint/VERSION HISTORY.md pyproject.toml
+	@git add hackaton_owkin_gbm/VERSION HISTORY.md pyproject.toml
 	@git commit -m "release: version $${TAG} 🚀"
 	@echo "creating git tag : $${TAG}"
 	@git tag $${TAG}
 	@git push -u origin HEAD --tags
 	@echo "Github Actions will detect the new tag and release the new version."
 	@mkdocs gh-deploy
-	@echo "Documentation deployed to https://jkobject.github.io/scPRINT/"
+	@echo "Documentation deployed to https://jkobject.github.io/hackaton_owkin_gbm/"
 
 .PHONY: docs
 docs:             ## Build the documentation.
